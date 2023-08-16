@@ -32,46 +32,10 @@ exports.userpost = async (req, res) => {
 // get all users
 exports.getUsers = async(req,res)=>{
 
-    const search = req.query.search || "";
-    const status = req.query.status || "";
-    const gender = req.query.gender || "";
-    const sort = req.query.sort || "";
-    const page = req.query.page || 1;
-    const ITEM_PER_PAGE = req.query.iteams || 4
-    
-    const query = {
-        firstname:{$regex:search,$options:"i"}
-    }
-    
-    if(status !== "All"){
-        query.status = status
-    }
-
-    if(gender !== "All"){
-        query.gender = gender
-    }
 
     try {
-
-        // skip
-        const skip = (page - 1) *ITEM_PER_PAGE  // 2-1 =1 1*4 = 4
-
-        // count Document
-        const count = await users.countDocuments(query);
-
-        const usersData = await users.find(query)
-        .sort({datecreated:sort == "new" ? -1 :1})
-        .limit(ITEM_PER_PAGE)
-        .skip(skip) // 0
-
-        const pageCount = Math.ceil(count/ITEM_PER_PAGE);  //8/4 = 2
-
-        res.status(200).json({
-            pagination:{
-                count:pageCount
-            },
-            usersData
-        });
+        const usersData=  await   users.find();
+        res.status(200).json(usersData);
     } catch (error) {
         res.status(400).json(error);
         console.log("catch block error")
